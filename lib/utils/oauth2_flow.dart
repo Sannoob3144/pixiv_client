@@ -1,8 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
+
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
+
 import 'package:pixiv_client/data/pixiv_api_constants.dart';
 
 // Ref: https://gist.github.com/ZipFile/c9ebedb224406f4f11845ab700124362
@@ -47,7 +48,11 @@ class PixivOAuth2Client {
       'code_challenge_method': 'S256',
       'client': 'pixiv-android',
     };
-    print(oAuthQueryParams);
+  }
+
+  Uri get loginUri {
+    return Uri.https(PIXIV_APP_API, PIXIV_LOGIN_PATH,
+        this.oAuthQueryParams);
   }
 
   Future<Map> login (String code) async {
@@ -64,10 +69,9 @@ class PixivOAuth2Client {
 
     Uri authTokenURL = Uri.https(PIXIV_OAUTH_SECURE_API, PIXIV_AUTH_TOKEN_URL);
     final http.Response response = await http.post(authTokenURL, headers: headers, body: body);
-    if (response.statusCode != 200) throw new HttpException("Error on request, try again");
     final Map decodedJson = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-    // final String accessToken = decodedJson["access_token"];
-    // final String refreshToken = decodedJson["refresh_token"];
+    if (response.statusCode != 200) throw new Exception("Error on request, try again (Status code: ${response.statusCode})\n${response.body}");
+    print(decodedJson);
     return decodedJson;
   }
 
