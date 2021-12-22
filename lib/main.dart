@@ -1,30 +1,33 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-import './screens/login.dart';
-import './screens/main.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+
+import 'package:pixiv_client/screens/login.dart';
+import 'package:pixiv_client/screens/main.dart';
+
+var initialRoute = "/";
 
 void main() {
-  runApp(PixivClient());
+  runZonedGuarded(() {
+    runApp(PixivClient());
+  }, (error, stack) {
+    print('- App is crashed');
+    print('- Error message');
+    print(error);
+    print('- Stack trace');
+    print(stack);
+    Fluttertoast.showToast(msg: "${error.toString()} ${stack.toString()}");
+  });
 }
 
 class PixivClient extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: Scaffold(
-            appBar: AppBar(
-              title: Text('PixivClient'),
-            ),
-            body: MaterialApp(
-              initialRoute: '/',
-              routes: {
-                '/': (context) => MainScreen(),
-                '/login': (context) => LoginScreen()
-              },
-            )));
+    return MaterialApp(initialRoute: initialRoute, routes: {
+      "/": (context) => MainScreen(),
+      "/login": (context) => LoginScreen(),
+    });
   }
 }
