@@ -1,7 +1,13 @@
 class LoginData {
   final String accessToken;
   final String refreshToken;
-  final DateTime accessTokenExpires;
 
-  LoginData({required this.accessToken, required this.refreshToken, required this.accessTokenExpires});
+  LoginData({required this.accessToken, required this.refreshToken});
+
+  Map<String, dynamic> toMap() {
+    return {
+      "accessToken": accessToken,
+      "refreshToken": refreshToken,
+    };
+  }
 }
